@@ -274,9 +274,12 @@ export default function App() {
             ['Battery',       `${plen}/${g.battery} ${within ? 'OK' : 'OVER!'}`, within ? C.green : C.red],
           ]
           if (path.length > 1) {
-            g.msg      = `Path found — ${plen} steps.  Drone launching!`
-            g.msgColor = C.green
-            g.dronePath = path.map(([r, c]) => cellCenter(r, c))
+            const flightPath = within ? path : path.slice(0, g.battery + 1)
+            g.msg      = within
+              ? `Path found — ${plen} steps.  Drone launching!`
+              : `Battery limit reached! Flying first ${g.battery} of ${plen} steps.`
+            g.msgColor = within ? C.green : C.amber
+            g.dronePath = flightPath.map(([r, c]) => cellCenter(r, c))
             g.dronePos  = [...g.dronePath[0]]
             g.droneIdx  = 1
             g.droneAngle = 0
@@ -295,8 +298,11 @@ export default function App() {
     if (g.flying && g.dronePos) {
       if (g.droneIdx >= g.dronePath.length) {
         g.flying   = false
-        g.msg      = 'Drone reached the target!'
-        g.msgColor = C.green
+        const lastCell = g.dronePath[g.dronePath.length - 1]
+        const [er, ec] = cellCenter(g.end[0], g.end[1])
+        const reachedTarget = lastCell[0] === er && lastCell[1] === ec
+        g.msg      = reachedTarget ? 'Drone reached the target!' : 'Battery depleted — drone stopped mid-flight.'
+        g.msgColor = reachedTarget ? C.green : C.red
         needSync   = true
       } else {
         const [tx, ty] = g.dronePath[g.droneIdx]
@@ -467,7 +473,9 @@ export default function App() {
     g.msgColor = C.txtSec
 
     if (safePath.length > 1) {
-      g.dronePath  = safePath.map(([r, c]) => cellCenter(r, c))
+      const safeWithinBattery = sfp <= g.battery
+      const flightPath = safeWithinBattery ? safePath : safePath.slice(0, g.battery + 1)
+      g.dronePath  = flightPath.map(([r, c]) => cellCenter(r, c))
       g.dronePos   = [...g.dronePath[0]]
       g.droneIdx   = 1
       g.droneAngle = 0
