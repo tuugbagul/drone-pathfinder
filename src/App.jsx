@@ -561,7 +561,13 @@ export default function App() {
             onContextMenu={(e) => e.preventDefault()}
           />
         </div>
-        <div className="status-bar" style={{ color: msgColor }}>
+        <div
+          className={`status-bar ${
+            msgColor === C.green ? 'status-success' :
+            msgColor === C.red   ? 'status-danger'  : ''
+          }`}
+          style={{ color: msgColor }}
+        >
           {msg}
         </div>
       </div>

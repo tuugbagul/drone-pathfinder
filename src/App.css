@@ -26,13 +26,38 @@ canvas {
 }
 
 .status-bar {
-  padding: 7px 12px;
-  font-size: 11px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 500;
   letter-spacing: 0.03em;
   border-top: 1px solid #1a1e30;
   background: #0d0f1a;
-  min-height: 30px;
+  min-height: 32px;
   flex-shrink: 0;
+  transition: background 0.3s ease, font-size 0.2s ease;
+}
+
+.status-success {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: rgba(40, 185, 80, 0.12);
+  border-top-color: #28b950;
+  animation: status-pulse 1.2s ease-in-out 3;
+}
+
+.status-danger {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: rgba(215, 55, 50, 0.12);
+  border-top-color: #d73732;
+  animation: status-pulse 1.2s ease-in-out 3;
+}
+
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.45; }
 }
 
 /* ── Panel ────────────────────────────────────────────────────────────────── */
