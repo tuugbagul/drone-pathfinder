@@ -243,7 +243,7 @@ export default function App() {
     ctx.fillText('T', ex, ey)
 
     // Drone
-    if (g.flying && g.dronePos) {
+    if (g.dronePos) {
       drawDrone(ctx, g.dronePos[0], g.dronePos[1], g.droneAngle)
     }
   }, [])
