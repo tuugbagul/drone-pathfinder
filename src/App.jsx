@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useCallback, useMemo } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 import { bfs, dfs, dijkstra, astar, dangerMap } from './utils/algorithms'
 import './App.css'
 

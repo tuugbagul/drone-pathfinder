@@ -1,3 +1,40 @@
+// ── Min-Heap ──────────────────────────────────────────────────────────────────
+
+class MinHeap {
+  constructor() { this._h = [] }
+  get size() { return this._h.length }
+  push(item) {
+    this._h.push(item)
+    this._bubbleUp(this._h.length - 1)
+  }
+  pop() {
+    const top = this._h[0]
+    const last = this._h.pop()
+    if (this._h.length > 0) { this._h[0] = last; this._siftDown(0) }
+    return top
+  }
+  _bubbleUp(i) {
+    while (i > 0) {
+      const p = (i - 1) >> 1
+      if (this._h[p][0] <= this._h[i][0]) break
+      ;[this._h[p], this._h[i]] = [this._h[i], this._h[p]]
+      i = p
+    }
+  }
+  _siftDown(i) {
+    const n = this._h.length
+    while (true) {
+      let smallest = i
+      const l = 2 * i + 1, r = 2 * i + 2
+      if (l < n && this._h[l][0] < this._h[smallest][0]) smallest = l
+      if (r < n && this._h[r][0] < this._h[smallest][0]) smallest = r
+      if (smallest === i) break
+      ;[this._h[i], this._h[smallest]] = [this._h[smallest], this._h[i]]
+      i = smallest
+    }
+  }
+}
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 export function getNeighbors(grid, r, c) {
@@ -120,13 +157,13 @@ export function dijkstra(grid, start, end, costMap) {
   const dist     = new Map([[startKey, 0]])
   const cameFrom = new Map([[startKey, null]])
   // Min-heap: [cost, row, col]
-  const heap     = [[0, start[0], start[1]]]
+  const heap     = new MinHeap()
+  heap.push([0, start[0], start[1]])
   const visited  = new Set()
   const order    = []
 
-  while (heap.length) {
-    heap.sort((a, b) => a[0] - b[0])
-    const [d, r, c] = heap.shift()
+  while (heap.size) {
+    const [d, r, c] = heap.pop()
     const key = `${r},${c}`
     if (visited.has(key)) continue
     visited.add(key)
@@ -146,6 +183,7 @@ export function dijkstra(grid, start, end, costMap) {
 }
 
 // ── A* ────────────────────────────────────────────────────────────────────────
+
 export function astar(grid, start, end, costMap) {
   const ROWS = grid.length, COLS = grid[0].length
   const cm = costMap || Array.from({ length: ROWS }, () => new Array(COLS).fill(1))
@@ -154,14 +192,14 @@ export function astar(grid, start, end, costMap) {
   const endKey   = `${end[0]},${end[1]}`
   const g        = new Map([[startKey, 0]])
   const cameFrom = new Map([[startKey, null]])
-  // [f, gCost, row, col]
-  const heap     = [[h(start[0], start[1]), 0, start[0], start[1]]]
+  // Min-heap: [f, gCost, row, col]
+  const heap     = new MinHeap()
+  heap.push([h(start[0], start[1]), 0, start[0], start[1]])
   const visited  = new Set()
   const order    = []
 
-  while (heap.length) {
-    heap.sort((a, b) => a[0] - b[0])
-    const [, d, r, c] = heap.shift()
+  while (heap.size) {
+    const [, d, r, c] = heap.pop()
     const key = `${r},${c}`
     if (visited.has(key)) continue
     visited.add(key)
